@@ -199,6 +199,7 @@ body {
   padding: 2.5rem;
   width: 480px;
   max-width: 95vw;
+  overflow: hidden;
 }
 
 .car-info-header {
@@ -235,6 +236,7 @@ body {
 
   .form-group {
     flex: 1;
+    min-width: 0;
   }
 }
 
@@ -260,6 +262,8 @@ body {
     font-size: 0.9rem;
     padding: 0.6rem 0.75rem;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
     transition: border-color 0.15s;
 
