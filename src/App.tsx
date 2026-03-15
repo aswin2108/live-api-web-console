@@ -74,7 +74,7 @@ function CarCheckApp() {
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
 
   const { setConfig, setModel } = useLiveAPIContext();
-  const { carInfo, sessionPhase, defects, report, resetSession } = useCarCheckStore();
+  const { carInfo, sessionPhase, defects, report } = useCarCheckStore();
 
   // Register tool call listeners
   useCarCheckTools();
