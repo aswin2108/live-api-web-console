@@ -481,6 +481,53 @@ body {
   }
 }
 
+/* ---- Skip button ---- */
+.skip-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px solid var(--gray-600);
+  border-radius: 6px;
+  color: var(--gray-300);
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+  margin-top: 0.75rem;
+
+  &:hover:not(:disabled) {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+/* ---- Live dot indicator (replaces play button) ---- */
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gray-500);
+  flex-shrink: 0;
+
+  &.connected {
+    background: var(--accent-green);
+    animation: live-pulse 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 /* ---- Inspection Panel (sidebar) ---- */
 .inspection-panel {
   width: 280px;
@@ -645,7 +692,10 @@ body {
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .overlay-stage-badge {
@@ -658,6 +708,30 @@ body {
   align-items: center;
   gap: 0.5rem;
   white-space: nowrap;
+}
+
+.overlay-skip-btn {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--gray-500);
+  border-radius: 16px;
+  color: var(--gray-200);
+  font-family: var(--font-family);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  pointer-events: all;
+
+  &:hover:not(:disabled) {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 .overlay-label {

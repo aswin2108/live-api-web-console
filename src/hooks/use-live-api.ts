@@ -38,7 +38,7 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
   const client = useMemo(() => new GenAILiveClient(options), [options]);
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
 
-  const [model, setModel] = useState<string>("models/gemini-2.0-flash-exp");
+  const [model, setModel] = useState<string>("gemini-2.5-flash-native-audio-preview-12-2025");
   const [config, setConfig] = useState<LiveConnectConfig>({});
   const [connected, setConnected] = useState(false);
   const [volume, setVolume] = useState(0);
@@ -46,36 +46,44 @@ export function useLiveAPI(options: LiveClientOptions): UseLiveAPIResults {
   // register audio for streaming server -> speakers
   useEffect(() => {
     if (!audioStreamerRef.current) {
+      console.log("[CarCheck] Setting up AudioContext...");
       audioContext({ id: "audio-out" }).then((audioCtx: AudioContext) => {
+        console.log("[CarCheck] AudioContext ready. state=", audioCtx.state);
         audioStreamerRef.current = new AudioStreamer(audioCtx);
         audioStreamerRef.current
           .addWorklet<any>("vumeter-out", VolMeterWorket, (ev: any) => {
             setVolume(ev.data.volume);
           })
           .then(() => {
-            // Successfully added worklet
+            console.log("[CarCheck] Audio worklet ready");
           });
+      }).catch((err) => {
+        console.error("[CarCheck] AudioContext setup failed:", err);
       });
     }
   }, [audioStreamerRef]);
 
   useEffect(() => {
     const onOpen = () => {
+      console.log("[CarCheck] useLiveAPI: onOpen — setConnected(true)");
       setConnected(true);
     };
 
     const onClose = () => {
+      console.log("[CarCheck] useLiveAPI: onClose — setConnected(false)");
       setConnected(false);
     };
 
     const onError = (error: ErrorEvent) => {
-      console.error("error", error);
+      console.error("[CarCheck] useLiveAPI: onError", error);
     };
 
     const stopAudioStreamer = () => audioStreamerRef.current?.stop();
 
-    const onAudio = (data: ArrayBuffer) =>
+    const onAudio = (data: ArrayBuffer) => {
+      console.log("[CarCheck] Audio chunk received, byteLength=", data.byteLength, "| audioStreamer ready=", !!audioStreamerRef.current);
       audioStreamerRef.current?.addPCM16(new Uint8Array(data));
+    };
 
     client
       .on("error", onError)

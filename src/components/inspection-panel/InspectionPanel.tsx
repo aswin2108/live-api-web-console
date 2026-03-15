@@ -1,4 +1,5 @@
 import { useCarCheckStore, INSPECTION_STAGES } from "../../store/carcheck-store";
+import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 
 const SEV_LABEL: Record<string, string> = {
   minor: "Minor",
@@ -7,7 +8,21 @@ const SEV_LABEL: Record<string, string> = {
 };
 
 export function InspectionPanel() {
-  const { currentStage, completedStages, defects } = useCarCheckStore();
+  const { currentStage, completedStages, defects, advanceStage } = useCarCheckStore();
+  const { client, connected } = useLiveAPIContext();
+
+  const currentIdx = INSPECTION_STAGES.indexOf(currentStage);
+  const nextStage = currentIdx < INSPECTION_STAGES.length - 1
+    ? INSPECTION_STAGES[currentIdx + 1]
+    : null;
+
+  const handleSkip = () => {
+    if (!nextStage || !connected) return;
+    advanceStage(nextStage);
+    client.send({
+      text: `[USER ACTION] The user has skipped the "${currentStage}" inspection stage. Please acknowledge briefly, then move on to the "${nextStage}" stage and tell the user exactly where to point the camera.`,
+    });
+  };
 
   const totalRepairCost = defects.reduce((sum, d) => sum + d.repairCostEstimate, 0);
 
@@ -32,6 +47,17 @@ export function InspectionPanel() {
             );
           })}
         </ul>
+        {nextStage && (
+          <button
+            className="skip-btn"
+            onClick={handleSkip}
+            disabled={!connected}
+            title={`Skip to ${nextStage}`}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "0.9rem" }}>skip_next</span>
+            Skip this section
+          </button>
+        )}
       </div>
 
       <div className="panel-section">

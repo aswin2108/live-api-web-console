@@ -73,7 +73,7 @@ function CarCheckApp() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
 
-  const { setConfig, setModel } = useLiveAPIContext();
+  const { client, setConfig, setModel } = useLiveAPIContext();
   const { carInfo, sessionPhase, defects, report } = useCarCheckStore();
 
   // Register tool call listeners
@@ -86,11 +86,12 @@ function CarCheckApp() {
     }
   }, [sessionPhase, carInfo, defects, report]);
 
-  // Configure Gemini when carInfo is set
+  // Configure Gemini and auto-connect when carInfo is set
   useEffect(() => {
+    console.log("[CarCheck] useEffect triggered. carInfo=", carInfo);
     if (!carInfo) return;
-    setModel("models/gemini-2.0-flash-exp");
-    setConfig({
+    const model = "gemini-2.5-flash-native-audio-preview-12-2025";
+    const cfg = {
       responseModalities: [Modality.AUDIO],
       speechConfig: {
         voiceConfig: {
@@ -101,8 +102,20 @@ function CarCheckApp() {
         parts: [{ text: buildSystemPrompt(carInfo) }],
       },
       tools: [{ functionDeclarations: allCarCheckDeclarations }],
+    };
+    console.log("[CarCheck] Calling client.connect() with model=", model);
+    setModel(model);
+    setConfig(cfg);
+    client.connect(model, cfg).then((result) => {
+      console.log("[CarCheck] client.connect() resolved with result=", result, "| client.status=", client.status);
+    }).catch((err) => {
+      console.error("[CarCheck] client.connect() threw:", err);
     });
-  }, [carInfo, setConfig, setModel]);
+    return () => {
+      console.log("[CarCheck] useEffect cleanup: disconnecting");
+      client.disconnect();
+    };
+  }, [carInfo, setConfig, setModel, client]);
 
   const isSetup = sessionPhase === "setup";
   const isReport = sessionPhase === "report";
@@ -128,11 +141,12 @@ function CarCheckApp() {
             {/* Video stream */}
             <video
               className={cn("stream", {
-                hidden: !videoRef.current || !videoStream,
+                hidden: !videoStream,
               })}
               ref={videoRef}
               autoPlay
               playsInline
+              muted
             />
           </div>
 
@@ -141,6 +155,7 @@ function CarCheckApp() {
             supportsVideo={true}
             onVideoStreamChange={setVideoStream}
             enableEditingSettings={false}
+            hideConnectButton={true}
           >
             {/* extra buttons could go here */}
           </ControlTray>

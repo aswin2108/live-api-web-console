@@ -32,6 +32,7 @@ export type ControlTrayProps = {
   supportsVideo: boolean;
   onVideoStreamChange?: (stream: MediaStream | null) => void;
   enableEditingSettings?: boolean;
+  hideConnectButton?: boolean;
 };
 
 type MediaStreamButtonProps = {
@@ -64,6 +65,7 @@ function ControlTray({
   onVideoStreamChange = () => {},
   supportsVideo,
   enableEditingSettings,
+  hideConnectButton = false,
 }: ControlTrayProps) {
   const videoStreams = [useWebcam(), useScreenCapture()];
   const [activeVideoStream, setActiveVideoStream] =
@@ -74,6 +76,7 @@ function ControlTray({
   const [muted, setMuted] = useState(false);
   const renderCanvasRef = useRef<HTMLCanvasElement>(null);
   const connectButtonRef = useRef<HTMLButtonElement>(null);
+  const webcamAutoStartedRef = useRef(false);
 
   const { client, connected, connect, disconnect, volume } =
     useLiveAPIContext();
@@ -82,6 +85,17 @@ function ControlTray({
     if (!connected && connectButtonRef.current) {
       connectButtonRef.current.focus();
     }
+  }, [connected]);
+
+  // Auto-start webcam when Gemini connects (first time only)
+  useEffect(() => {
+    console.log("[CarCheck] ControlTray: connected=", connected, "| webcamStarted=", webcamAutoStartedRef.current, "| activeStream=", !!activeVideoStream);
+    if (connected && !webcamAutoStartedRef.current && !activeVideoStream) {
+      console.log("[CarCheck] ControlTray: AUTO-STARTING webcam");
+      webcamAutoStartedRef.current = true;
+      changeStreams(webcam)();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected]);
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -199,20 +213,39 @@ function ControlTray({
         {children}
       </nav>
 
-      <div className={cn("connection-container", { connected })}>
-        <div className="connection-button-container">
-          <button
-            ref={connectButtonRef}
-            className={cn("action-button connect-toggle", { connected })}
-            onClick={connected ? disconnect : connect}
-          >
-            <span className="material-symbols-outlined filled">
-              {connected ? "pause" : "play_arrow"}
-            </span>
-          </button>
+      {hideConnectButton ? (
+        <div className={cn("connection-container", { connected })}>
+          {connected ? (
+            <>
+              <span className="live-dot connected" />
+              <span className="text-indicator">Live</span>
+            </>
+          ) : (
+            <button
+              className="action-button connect-toggle"
+              onClick={connect}
+              title="Connect to Gemini"
+            >
+              <span className="material-symbols-outlined filled">play_arrow</span>
+            </button>
+          )}
         </div>
-        <span className="text-indicator">Streaming</span>
-      </div>
+      ) : (
+        <div className={cn("connection-container", { connected })}>
+          <div className="connection-button-container">
+            <button
+              ref={connectButtonRef}
+              className={cn("action-button connect-toggle", { connected })}
+              onClick={connected ? disconnect : connect}
+            >
+              <span className="material-symbols-outlined filled">
+                {connected ? "pause" : "play_arrow"}
+              </span>
+            </button>
+          </div>
+          <span className="text-indicator">Streaming</span>
+        </div>
+      )}
       {enableEditingSettings ? <SettingsDialog /> : ""}
     </section>
   );

@@ -87,6 +87,9 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
     return this._model;
   }
 
+  // Incremented on every connect/disconnect so stale close events are ignored
+  private _connectionGeneration = 0;
+
   protected config: LiveConnectConfig | null = null;
 
   public getConfig() {
@@ -113,7 +116,9 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
   }
 
   async connect(model: string, config: LiveConnectConfig): Promise<boolean> {
+    console.log("[CarCheck] GenAILiveClient.connect() called. current _status=", this._status);
     if (this._status === "connected" || this._status === "connecting") {
+      console.warn("[CarCheck] connect() blocked — already", this._status);
       return false;
     }
 
@@ -121,26 +126,49 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
     this.config = config;
     this._model = model;
 
+    const myGeneration = ++this._connectionGeneration;
+    console.log("[CarCheck] Starting WebSocket, generation=", myGeneration);
+
+    const safeOnClose = (e: CloseEvent) => {
+      console.log("[CarCheck] safeOnClose fired. myGen=", myGeneration, "currentGen=", this._connectionGeneration, "code=", e.code, "reason=", e.reason);
+      if (this._connectionGeneration !== myGeneration) {
+        this.log("server.close", "stale close event ignored");
+        return;
+      }
+      this._status = "disconnected";
+      this._session = null;
+      this.log(
+        "server.close",
+        `disconnected ${e.reason ? `with reason: ${e.reason}` : ""}`
+      );
+      this.emit("close", e);
+    };
+
     const callbacks: LiveCallbacks = {
       onopen: this.onopen,
       onmessage: this.onmessage,
       onerror: this.onerror,
-      onclose: this.onclose,
+      onclose: safeOnClose,
     };
 
     try {
+      console.log("[CarCheck] Awaiting this.client.live.connect()...");
       this._session = await this.client.live.connect({
         model,
         config,
         callbacks,
       });
+      console.log("[CarCheck] this.client.live.connect() resolved. session=", this._session);
     } catch (e) {
-      console.error("Error connecting to GenAI Live:", e);
-      this._status = "disconnected";
+      console.error("[CarCheck] this.client.live.connect() threw:", e);
+      if (this._connectionGeneration === myGeneration) {
+        this._status = "disconnected";
+      }
       return false;
     }
 
     this._status = "connected";
+    console.log("[CarCheck] _status set to connected");
     return true;
   }
 
@@ -148,7 +176,13 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
     if (!this.session) {
       return false;
     }
-    this.session?.close();
+    // Bump generation so any in-flight close event from this session is ignored
+    this._connectionGeneration++;
+    try {
+      this.session.close();
+    } catch (e) {
+      // WebSocket may already be closing/closed — safe to ignore
+    }
     this._session = null;
     this._status = "disconnected";
 
@@ -157,11 +191,13 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
   }
 
   protected onopen() {
+    console.log("[CarCheck] WebSocket onopen fired — connection established!");
     this.log("client.open", "Connected");
     this.emit("open");
   }
 
   protected onerror(e: ErrorEvent) {
+    console.error("[CarCheck] WebSocket onerror fired:", e.message, e);
     this.log("server.error", e.message);
     this.emit("error", e);
   }
