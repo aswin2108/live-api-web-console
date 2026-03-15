@@ -317,6 +317,17 @@ body {
   }
 }
 
+/* Hide number input spinners */
+.car-info-form input[type="number"] {
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 .car-info-hint {
   text-align: center;
   color: var(--gray-500);
