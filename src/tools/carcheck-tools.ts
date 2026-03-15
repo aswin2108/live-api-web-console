@@ -23,14 +23,14 @@ export const recordDefectDeclaration: FunctionDeclaration = {
         type: Type.STRING,
         enum: ["minor", "moderate", "major"],
         description:
-          "minor = cosmetic / under $500 | moderate = $500-$2000 | major = over $2000 / structural / safety",
+          "minor = cosmetic / under ₹5,000 | moderate = ₹5,000–₹50,000 | major = over ₹50,000 / structural / safety",
       },
-      estimated_repair_cost_usd: {
+      estimated_repair_cost_inr: {
         type: Type.NUMBER,
-        description: "Estimated repair cost in USD",
+        description: "Estimated repair cost in Indian Rupees (INR)",
       },
     },
-    required: ["area", "description", "severity", "estimated_repair_cost_usd"],
+    required: ["area", "description", "severity", "estimated_repair_cost_inr"],
   },
 };
 
@@ -63,10 +63,10 @@ export const completeInspectionDeclaration: FunctionDeclaration = {
   parameters: {
     type: Type.OBJECT,
     properties: {
-      fair_price_usd: {
+      fair_price_inr: {
         type: Type.NUMBER,
         description:
-          "The calculated fair offer price (asking price minus repair costs minus 5-10% negotiation buffer)",
+          "The calculated fair offer price in INR (asking price minus repair costs minus 5-10% negotiation buffer)",
       },
       price_breakdown: {
         type: Type.ARRAY,
@@ -79,7 +79,7 @@ export const completeInspectionDeclaration: FunctionDeclaration = {
           required: ["label", "amount"],
         },
         description:
-          "Itemized price deductions (e.g. [{label: 'Paint scratch repair', amount: -300}])",
+          "Itemized price deductions in INR (e.g. [{label: 'Paint scratch repair', amount: -3000}])",
       },
       bargaining_points: {
         type: Type.ARRAY,
@@ -88,7 +88,7 @@ export const completeInspectionDeclaration: FunctionDeclaration = {
           "3-5 specific talking points the buyer can use when negotiating",
       },
     },
-    required: ["fair_price_usd", "price_breakdown", "bargaining_points"],
+    required: ["fair_price_inr", "price_breakdown", "bargaining_points"],
   },
 };
 
@@ -114,7 +114,7 @@ export function useCarCheckTools() {
             area: args.area,
             description: args.description,
             severity: args.severity,
-            repairCostEstimate: args.estimated_repair_cost_usd,
+            repairCostEstimate: args.estimated_repair_cost_inr,
           });
           responses.push({ id: fc.id, response: { output: "Defect recorded." } });
         } else if (fc.name === "advance_stage") {
@@ -125,7 +125,7 @@ export function useCarCheckTools() {
           });
         } else if (fc.name === "complete_inspection") {
           completeInspection({
-            fairPrice: args.fair_price_usd,
+            fairPrice: args.fair_price_inr,
             breakdown: args.price_breakdown || [],
             bargainingPoints: args.bargaining_points || [],
           });

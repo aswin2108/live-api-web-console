@@ -53,7 +53,7 @@ export function InspectionPanel() {
                 </div>
                 <p className="defect-desc">{d.description}</p>
                 <span className="defect-cost">
-                  Est. ${d.repairCostEstimate.toLocaleString()}
+                  Est. ₹{d.repairCostEstimate.toLocaleString("en-IN")}
                 </span>
               </li>
             ))}
@@ -62,7 +62,7 @@ export function InspectionPanel() {
         {defects.length > 0 && (
           <div className="repair-total">
             Total Est. Repairs:{" "}
-            <strong>${totalRepairCost.toLocaleString()}</strong>
+            <strong>₹{totalRepairCost.toLocaleString("en-IN")}</strong>
           </div>
         )}
       </div>

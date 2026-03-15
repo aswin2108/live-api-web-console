@@ -40,7 +40,7 @@ export function CarInfoForm() {
               <label>Make</label>
               <input
                 type="text"
-                placeholder="e.g. Toyota"
+                placeholder="e.g. Maruti Suzuki"
                 value={form.make}
                 onChange={(e) => setForm({ ...form, make: e.target.value })}
                 required
@@ -50,7 +50,7 @@ export function CarInfoForm() {
               <label>Model</label>
               <input
                 type="text"
-                placeholder="e.g. Camry"
+                placeholder="e.g. Swift"
                 value={form.model}
                 onChange={(e) => setForm({ ...form, model: e.target.value })}
                 required
@@ -62,7 +62,7 @@ export function CarInfoForm() {
               <label>Year</label>
               <input
                 type="number"
-                placeholder="e.g. 2019"
+                placeholder="e.g. 2020"
                 min="1980"
                 max="2026"
                 value={form.year}
@@ -71,7 +71,7 @@ export function CarInfoForm() {
               />
             </div>
             <div className="form-group">
-              <label>Mileage</label>
+              <label>Odometer (km)</label>
               <input
                 type="number"
                 placeholder="e.g. 45000"
@@ -83,12 +83,12 @@ export function CarInfoForm() {
             </div>
           </div>
           <div className="form-group">
-            <label>Asking Price ($)</label>
+            <label>Asking Price (₹)</label>
             <input
               type="number"
-              placeholder="e.g. 18500"
+              placeholder="e.g. 500000"
               min="0"
-              step="100"
+              step="1000"
               value={form.askingPrice}
               onChange={(e) => setForm({ ...form, askingPrice: e.target.value })}
               required

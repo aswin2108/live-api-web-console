@@ -19,7 +19,7 @@ export function PriceReport() {
         <div className="report-header">
           <h1>Inspection Report</h1>
           <p className="report-car">
-            {carInfo.year} {carInfo.make} {carInfo.model} · {carInfo.mileage.toLocaleString()} miles
+            {carInfo.year} {carInfo.make} {carInfo.model} · {carInfo.mileage.toLocaleString("en-IN")} km
           </p>
         </div>
 
@@ -27,16 +27,16 @@ export function PriceReport() {
         <div className="price-summary">
           <div className="price-box asking">
             <span className="price-label">Asking Price</span>
-            <span className="price-value">${carInfo.askingPrice.toLocaleString()}</span>
+            <span className="price-value">₹{carInfo.askingPrice.toLocaleString("en-IN")}</span>
           </div>
           <div className="price-arrow">→</div>
           <div className="price-box fair">
             <span className="price-label">Fair Offer</span>
-            <span className="price-value fair-value">${report.fairPrice.toLocaleString()}</span>
+            <span className="price-value fair-value">₹{report.fairPrice.toLocaleString("en-IN")}</span>
           </div>
           <div className="price-box savings">
             <span className="price-label">You Save</span>
-            <span className="price-value savings-value">${savings.toLocaleString()}</span>
+            <span className="price-value savings-value">₹{savings.toLocaleString("en-IN")}</span>
           </div>
         </div>
 
@@ -54,19 +54,19 @@ export function PriceReport() {
               <tbody>
                 <tr>
                   <td>Asking Price</td>
-                  <td className="amount-positive">${carInfo.askingPrice.toLocaleString()}</td>
+                  <td className="amount-positive">₹{carInfo.askingPrice.toLocaleString("en-IN")}</td>
                 </tr>
                 {report.breakdown.map((item, i) => (
                   <tr key={i}>
                     <td>{item.label}</td>
                     <td className={item.amount < 0 ? "amount-negative" : "amount-positive"}>
-                      {item.amount < 0 ? "-" : "+"}${Math.abs(item.amount).toLocaleString()}
+                      {item.amount < 0 ? "-" : "+"}₹{Math.abs(item.amount).toLocaleString("en-IN")}
                     </td>
                   </tr>
                 ))}
                 <tr className="total-row">
                   <td>Fair Offer Price</td>
-                  <td className="fair-total">${report.fairPrice.toLocaleString()}</td>
+                  <td className="fair-total">₹{report.fairPrice.toLocaleString("en-IN")}</td>
                 </tr>
               </tbody>
             </table>
@@ -96,7 +96,7 @@ export function PriceReport() {
                         {SEV_LABEL[d.severity]}
                       </span>
                     </td>
-                    <td>${d.repairCostEstimate.toLocaleString()}</td>
+                    <td>₹{d.repairCostEstimate.toLocaleString("en-IN")}</td>
                   </tr>
                 ))}
               </tbody>
