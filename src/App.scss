@@ -273,6 +273,50 @@ body {
   }
 }
 
+.input-adornment {
+  display: flex;
+  align-items: center;
+  background: var(--Neutral-15);
+  border: 1px solid var(--border-stroke);
+  border-radius: 8px;
+  transition: border-color 0.15s;
+
+  &:focus-within {
+    border-color: var(--accent-blue);
+  }
+
+  input {
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 0;
+
+    &:focus {
+      outline: none;
+      border-color: transparent;
+    }
+  }
+
+  .adornment-prefix,
+  .adornment-suffix {
+    padding: 0 0.6rem;
+    color: var(--accent-blue);
+    font-size: 0.9rem;
+    font-weight: 700;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .adornment-prefix {
+    padding-right: 0.25rem;
+  }
+
+  .adornment-suffix {
+    padding-left: 0.25rem;
+  }
+}
+
 .car-info-hint {
   text-align: center;
   color: var(--gray-500);

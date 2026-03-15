@@ -71,28 +71,34 @@ export function CarInfoForm() {
               />
             </div>
             <div className="form-group">
-              <label>Odometer (km)</label>
-              <input
-                type="number"
-                placeholder="e.g. 45000"
-                min="0"
-                value={form.mileage}
-                onChange={(e) => setForm({ ...form, mileage: e.target.value })}
-                required
-              />
+              <label>Odometer</label>
+              <div className="input-adornment">
+                <input
+                  type="number"
+                  placeholder="e.g. 45000"
+                  min="0"
+                  value={form.mileage}
+                  onChange={(e) => setForm({ ...form, mileage: e.target.value })}
+                  required
+                />
+                <span className="adornment-suffix">km</span>
+              </div>
             </div>
           </div>
           <div className="form-group">
-            <label>Asking Price (₹)</label>
-            <input
-              type="number"
-              placeholder="e.g. 500000"
-              min="0"
-              step="1000"
-              value={form.askingPrice}
-              onChange={(e) => setForm({ ...form, askingPrice: e.target.value })}
-              required
-            />
+            <label>Asking Price</label>
+            <div className="input-adornment">
+              <span className="adornment-prefix">₹</span>
+              <input
+                type="number"
+                placeholder="e.g. 500000"
+                min="0"
+                step="1000"
+                value={form.askingPrice}
+                onChange={(e) => setForm({ ...form, askingPrice: e.target.value })}
+                required
+              />
+            </div>
           </div>
           <button type="submit" className="start-btn">
             Start Inspection →
