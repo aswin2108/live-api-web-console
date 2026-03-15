@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CarInfo, useCarCheckStore } from "../../store/carcheck-store";
 import { INDIAN_CARS, MAKES } from "../../data/indian-cars";
+import { CustomSelect } from "./CustomSelect";
 
 export function CarInfoForm() {
   const { setCarInfo, setSessionPhase } = useCarCheckStore();
@@ -57,17 +58,12 @@ export function CarInfoForm() {
           {/* Make */}
           <div className="form-group">
             <label>Make</label>
-            <select
+            <CustomSelect
+              options={[...MAKES, "Others"]}
               value={makeChoice}
-              onChange={(e) => handleMakeChange(e.target.value)}
-              required
-            >
-              <option value="" disabled>Select make…</option>
-              {MAKES.map((m) => (
-                <option key={m} value={m}>{m}</option>
-              ))}
-              <option value="Others">Others</option>
-            </select>
+              placeholder="Select make…"
+              onChange={handleMakeChange}
+            />
             {isOtherMake && (
               <input
                 type="text"
@@ -95,20 +91,12 @@ export function CarInfoForm() {
                 />
               ) : (
                 <>
-                  <select
+                  <CustomSelect
+                    options={[...models, "Others"]}
                     value={modelChoice}
-                    onChange={(e) => {
-                      setModelChoice(e.target.value);
-                      setModelText("");
-                    }}
-                    required
-                  >
-                    <option value="" disabled>Select model…</option>
-                    {models.map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                    <option value="Others">Others</option>
-                  </select>
+                    placeholder="Select model…"
+                    onChange={(val) => { setModelChoice(val); setModelText(""); }}
+                  />
                   {isOtherModel && (
                     <input
                       type="text"
