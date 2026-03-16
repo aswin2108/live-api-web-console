@@ -164,7 +164,7 @@ export function CarInfoForm() {
         </form>
 
         <p className="car-info-hint">
-          After submitting, click the <strong>play button</strong> to connect AI and begin.
+          The AI will connect automatically. Allow camera &amp; microphone access when prompted.
         </p>
       </div>
     </div>
