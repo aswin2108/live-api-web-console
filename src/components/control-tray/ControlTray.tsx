@@ -67,7 +67,8 @@ function ControlTray({
   enableEditingSettings,
   hideConnectButton = false,
 }: ControlTrayProps) {
-  const videoStreams = [useWebcam(), useScreenCapture()];
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const videoStreams = [useWebcam(facingMode), useScreenCapture()];
   const [activeVideoStream, setActiveVideoStream] =
     useState<MediaStream | null>(null);
   const [webcam, screenCapture] = videoStreams;
@@ -159,6 +160,25 @@ function ControlTray({
     };
   }, [connected, activeVideoStream, client, videoRef]);
 
+  // Flip between front and back camera
+  const flipCamera = async () => {
+    const next = "environment" === facingMode ? "user" : "environment";
+    setFacingMode(next);
+    // Stop current stream; ControlTray will restart via changeStreams after state updates
+    if (webcam.isStreaming) {
+      webcam.stop();
+      onVideoStreamChange(null);
+      setActiveVideoStream(null);
+      // Short delay lets the browser release the old camera track before acquiring new one
+      await new Promise((r) => setTimeout(r, 150));
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: next } },
+      });
+      setActiveVideoStream(mediaStream);
+      onVideoStreamChange(mediaStream);
+    }
+  };
+
   //handler for swapping from one video-stream to the next
   const changeStreams = (next?: UseMediaStreamResult) => async () => {
     if (next) {
@@ -208,6 +228,15 @@ function ControlTray({
               onIcon="videocam_off"
               offIcon="videocam"
             />
+            {webcam.isStreaming && (
+              <button
+                className="action-button"
+                onClick={flipCamera}
+                title="Flip camera"
+              >
+                <span className="material-symbols-outlined">flip_camera_android</span>
+              </button>
+            )}
           </>
         )}
         {children}

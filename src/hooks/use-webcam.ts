@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { UseMediaStreamResult } from "./use-media-stream-mux";
 
-export function useWebcam(): UseMediaStreamResult {
+export function useWebcam(
+  facingMode: "user" | "environment" = "environment"
+): UseMediaStreamResult {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  // Keep a ref so start() always uses the latest facingMode without stale closure
+  const facingModeRef = useRef(facingMode);
+  useEffect(() => {
+    facingModeRef.current = facingMode;
+  }, [facingMode]);
 
   useEffect(() => {
     const handleStreamEnded = () => {
@@ -42,7 +49,7 @@ export function useWebcam(): UseMediaStreamResult {
 
   const start = async () => {
     const mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
+      video: { facingMode: { ideal: facingModeRef.current } },
     });
     setStream(mediaStream);
     setIsStreaming(true);
