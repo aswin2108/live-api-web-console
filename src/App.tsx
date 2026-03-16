@@ -12,7 +12,7 @@ import { CarInfoForm } from "./components/car-info-form/CarInfoForm";
 import { InspectionPanel } from "./components/inspection-panel/InspectionPanel";
 import { InspectionOverlay } from "./components/inspection-overlay/InspectionOverlay";
 import { PriceReport } from "./components/price-report/PriceReport";
-import { useCarCheckStore, CarInfo } from "./store/carcheck-store";
+import { useCarCheckStore, CarInfo, Defect, INSPECTION_STAGES } from "./store/carcheck-store";
 import { useCarCheckTools, allCarCheckDeclarations } from "./tools/carcheck-tools";
 import { saveInspectionReport } from "./lib/firestore";
 import { LiveClientOptions } from "./types";
@@ -28,8 +28,15 @@ const apiOptions: LiveClientOptions = {
   apiKey: API_KEY,
 };
 
-function buildSystemPrompt(car: CarInfo): string {
-  return `You are CarCheck, an expert AI used car inspector in India, helping a buyer do a thorough pre-purchase inspection.
+function buildSystemPrompt(
+  car: CarInfo,
+  completedStages: string[] = [],
+  currentStage: string = INSPECTION_STAGES[0],
+  defects: Defect[] = []
+): string {
+  const isResume = completedStages.length > 0 || defects.length > 0;
+
+  const basePrompt = `You are CarCheck, an expert AI used car inspector in India, helping a buyer do a thorough pre-purchase inspection.
 
 VEHICLE BEING INSPECTED:
 - Make: ${car.make}
@@ -92,7 +99,30 @@ INTERACTION RULES — follow these exactly:
   * fair_price_inr = asking price minus total repair costs minus 5–10% negotiation buffer
   * price_breakdown = itemized deductions in ₹
   * bargaining_points = 3–5 specific, factual points the buyer can use with the seller (include any VIN/date code issues or touch-test findings found)
-- Severity guide (Indian repair costs): minor = cosmetic only / under ₹5,000 | moderate = ₹5,000–₹50,000 | major = over ₹50,000 / structural / safety concern / flood damage / VIN mismatch
+- Severity guide (Indian repair costs): minor = cosmetic only / under ₹5,000 | moderate = ₹5,000–₹50,000 | major = over ₹50,000 / structural / safety concern / flood damage / VIN mismatch`;
+
+  if (isResume) {
+    const defectList =
+      defects.length === 0
+        ? "None yet."
+        : defects
+            .map(
+              (d) =>
+                `- [${d.severity.toUpperCase()}] ${d.area}: ${d.description} (est. ₹${d.repairCostEstimate.toLocaleString("en-IN")})`
+            )
+            .join("\n");
+
+    return `${basePrompt}
+
+RESUME: You are reconnecting to an in-progress inspection. Do NOT restart from stage 1 or re-greet the user as if this is a new session.
+Stages already completed: ${completedStages.join(", ") || "None"}.
+Currently on: ${currentStage}.
+Defects recorded so far (${defects.length}):
+${defectList}
+Briefly say "Welcome back! Continuing the ${currentStage} inspection." then immediately resume the ${currentStage} stage from where you left off.`;
+  }
+
+  return `${basePrompt}
 
 START: Greet the user warmly in a friendly Indian tone, confirm the car details (${car.year} ${car.make} ${car.model}, ${car.mileage.toLocaleString("en-IN")} km, asking ₹${car.askingPrice.toLocaleString("en-IN")}), then ask them to point the camera at the FRONT of the car to begin.`;
 }
@@ -102,7 +132,7 @@ function CarCheckApp() {
   const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
 
   const { client, setConfig, setModel } = useLiveAPIContext();
-  const { carInfo, sessionPhase, defects, report } = useCarCheckStore();
+  const { carInfo, sessionPhase, defects, report, currentStage, completedStages } = useCarCheckStore();
 
   // Register tool call listeners
   useCarCheckTools();
@@ -114,9 +144,30 @@ function CarCheckApp() {
     }
   }, [sessionPhase, carInfo, defects, report]);
 
-  // Configure Gemini and auto-connect when carInfo is set
+  // Keep config in sync with inspection progress.
+  // This ensures that when the Live API connection drops and the user clicks
+  // play to reconnect, the new session knows which stage we're on and what
+  // defects have already been found — so it resumes instead of restarting.
   useEffect(() => {
-    console.log("[CarCheck] useEffect triggered. carInfo=", carInfo);
+    if (!carInfo) return;
+    const cfg = {
+      responseModalities: [Modality.AUDIO],
+      speechConfig: {
+        voiceConfig: {
+          prebuiltVoiceConfig: { voiceName: "Aoede" },
+        },
+      },
+      systemInstruction: {
+        parts: [{ text: buildSystemPrompt(carInfo, completedStages, currentStage, defects) }],
+      },
+      tools: [{ functionDeclarations: allCarCheckDeclarations }],
+    };
+    setModel("gemini-2.5-flash-native-audio-preview-12-2025");
+    setConfig(cfg);
+  }, [carInfo, currentStage, completedStages, defects, setConfig, setModel]);
+
+  // Initial connect when car info is submitted (fresh start, no resume context).
+  useEffect(() => {
     if (!carInfo) return;
     const model = "gemini-2.5-flash-native-audio-preview-12-2025";
     const cfg = {
@@ -127,7 +178,7 @@ function CarCheckApp() {
         },
       },
       systemInstruction: {
-        parts: [{ text: buildSystemPrompt(carInfo) }],
+        parts: [{ text: buildSystemPrompt(carInfo, [], INSPECTION_STAGES[0], []) }],
       },
       tools: [{ functionDeclarations: allCarCheckDeclarations }],
     };
