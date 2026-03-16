@@ -1,0 +1,196 @@
+<svg width="1000" height="560" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+
+  <!-- Definitions: arrow markers -->
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#1976d2"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#388e3c"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f57c00"/>
+    </marker>
+    <marker id="arrowPink" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c2185b"/>
+    </marker>
+    <marker id="arrowDash" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f57c00"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas background -->
+  <rect width="1000" height="560" fill="#f4f6f9" rx="12"/>
+
+  <!-- Title -->
+  <text x="500" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a237e">CarCheck — System Architecture</text>
+  <line x1="200" y1="48" x2="800" y2="48" stroke="#c5cae9" stroke-width="1.5"/>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 1: USER DEVICE                     -->
+  <!-- ══════════════════════════════════════════ -->
+  <rect x="18" y="62" width="158" height="438" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="10"/>
+  <text x="97" y="84" text-anchor="middle" font-size="12" font-weight="bold" fill="#0d47a1">User Device</text>
+  <text x="97" y="99" text-anchor="middle" font-size="10" fill="#5c7a9e">Phone / Browser</text>
+
+  <!-- Phone box -->
+  <rect x="43" y="112" width="108" height="140" fill="white" stroke="#90caf9" stroke-width="1.5" rx="10"/>
+  <text x="97" y="152" text-anchor="middle" font-size="36">📱</text>
+  <text x="97" y="178" text-anchor="middle" font-size="10" fill="#555">Live Camera Feed</text>
+  <text x="97" y="194" text-anchor="middle" font-size="10" fill="#555">+ Microphone</text>
+  <rect x="68" y="204" width="58" height="6" fill="#1976d2" rx="3"/>
+  <text x="97" y="232" text-anchor="middle" font-size="10" fill="#888">7-stage inspection</text>
+
+  <!-- Input/Output labels -->
+  <rect x="33" y="275" width="128" height="26" fill="white" stroke="#1976d2" stroke-width="1" rx="5"/>
+  <text x="97" y="292" text-anchor="middle" font-size="10" fill="#333">🎤 Microphone (16kHz PCM)</text>
+
+  <rect x="33" y="312" width="128" height="26" fill="white" stroke="#1976d2" stroke-width="1" rx="5"/>
+  <text x="97" y="329" text-anchor="middle" font-size="10" fill="#333">📷 Camera (JPEG frames)</text>
+
+  <rect x="33" y="349" width="128" height="26" fill="white" stroke="#1976d2" stroke-width="1" rx="5"/>
+  <text x="97" y="366" text-anchor="middle" font-size="10" fill="#333">🔊 Audio Response</text>
+
+  <rect x="33" y="386" width="128" height="26" fill="#fff9c4" stroke="#f9a825" stroke-width="1" rx="5"/>
+  <text x="97" y="403" text-anchor="middle" font-size="10" fill="#555">🖥 Inspection UI</text>
+
+  <rect x="33" y="420" width="128" height="26" fill="#fff9c4" stroke="#f9a825" stroke-width="1" rx="5"/>
+  <text x="97" y="437" text-anchor="middle" font-size="10" fill="#555">📋 Price Report</text>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 2: FRONTEND                        -->
+  <!-- ══════════════════════════════════════════ -->
+  <rect x="196" y="62" width="440" height="438" fill="#f1f8e9" stroke="#388e3c" stroke-width="2" rx="10"/>
+  <text x="416" y="84" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">CarCheck Frontend</text>
+  <text x="416" y="99" text-anchor="middle" font-size="10" fill="#5a7a5c">React + TypeScript · Netlify / App Engine</text>
+
+  <!-- GenAI Live Client -->
+  <rect x="212" y="108" width="408" height="62" fill="#c8e6c9" stroke="#43a047" stroke-width="1.5" rx="8"/>
+  <text x="416" y="127" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">GenAILiveClient</text>
+  <text x="416" y="143" text-anchor="middle" font-size="10" fill="#2e4a30">WebSocket · Bidirectional stream · Audio PCM + JPEG video frames</text>
+  <text x="416" y="158" text-anchor="middle" font-size="10" fill="#4a7a4c">Handles connect / disconnect · Session resume on reconnect</text>
+
+  <!-- LiveAPIContext -->
+  <rect x="212" y="184" width="195" height="56" fill="white" stroke="#66bb6a" stroke-width="1" rx="6"/>
+  <text x="309" y="203" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">LiveAPIContext</text>
+  <text x="309" y="219" text-anchor="middle" font-size="10" fill="#555">connect · disconnect</text>
+  <text x="309" y="233" text-anchor="middle" font-size="10" fill="#555">model · config state</text>
+
+  <!-- Zustand Store -->
+  <rect x="417" y="184" width="203" height="56" fill="white" stroke="#66bb6a" stroke-width="1" rx="6"/>
+  <text x="518" y="203" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">Zustand Store</text>
+  <text x="518" y="219" text-anchor="middle" font-size="10" fill="#555">currentStage · completedStages</text>
+  <text x="518" y="233" text-anchor="middle" font-size="10" fill="#555">defects[] · carInfo · report</text>
+
+  <!-- Tool Calls -->
+  <rect x="212" y="254" width="408" height="52" fill="#fff9c4" stroke="#fbc02d" stroke-width="1.5" rx="6"/>
+  <text x="416" y="273" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Gemini Tool Calls (Function Declarations)</text>
+  <text x="416" y="290" text-anchor="middle" font-size="10" fill="#6d4c00">record_defect()   ·   advance_stage()   ·   complete_inspection()</text>
+  <text x="416" y="304" text-anchor="middle" font-size="9" fill="#9e7000">Gemini calls these to update store state and advance the UI in real time</text>
+
+  <!-- UI Components row -->
+  <rect x="212" y="320" width="408" height="96" fill="white" stroke="#66bb6a" stroke-width="1" rx="6"/>
+  <text x="416" y="339" text-anchor="middle" font-size="11" font-weight="bold" fill="#2e7d32">UI Components</text>
+
+  <rect x="220" y="347" width="88" height="24" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="4"/>
+  <text x="264" y="363" text-anchor="middle" font-size="9" fill="#333">CarInfoForm</text>
+
+  <rect x="316" y="347" width="96" height="24" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="4"/>
+  <text x="364" y="363" text-anchor="middle" font-size="9" fill="#333">InspectionPanel</text>
+
+  <rect x="420" y="347" width="88" height="24" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="4"/>
+  <text x="464" y="363" text-anchor="middle" font-size="9" fill="#333">ControlTray</text>
+
+  <rect x="516" y="347" width="96" height="24" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="4"/>
+  <text x="564" y="363" text-anchor="middle" font-size="9" fill="#333">PriceReport</text>
+
+  <rect x="220" y="380" width="124" height="24" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="4"/>
+  <text x="282" y="396" text-anchor="middle" font-size="9" fill="#333">InspectionOverlay</text>
+
+  <rect x="352" y="380" width="90" height="24" fill="#e8f5e9" stroke="#a5d6a7" stroke-width="1" rx="4"/>
+  <text x="397" y="396" text-anchor="middle" font-size="9" fill="#333">AudioPulse</text>
+
+  <rect x="450" y="380" width="162" height="24" fill="#fff9c4" stroke="#fbc02d" stroke-width="1" rx="4"/>
+  <text x="531" y="396" text-anchor="middle" font-size="9" fill="#6d4c00">System Prompt (~1000 words)</text>
+
+  <!-- Session Resume -->
+  <rect x="212" y="430" width="408" height="52" fill="#fce4ec" stroke="#e91e63" stroke-width="1.5" rx="6"/>
+  <text x="416" y="449" text-anchor="middle" font-size="11" font-weight="bold" fill="#880e4f">Session Resume Logic</text>
+  <text x="416" y="465" text-anchor="middle" font-size="10" fill="#555">Config re-syncs on every stage/defect change · Reconnect injects current progress</text>
+  <text x="416" y="479" text-anchor="middle" font-size="9" fill="#888">Gemini resumes mid-inspection instead of restarting after Live API timeout</text>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SECTION 3: GOOGLE CLOUD                    -->
+  <!-- ══════════════════════════════════════════ -->
+  <rect x="656" y="62" width="326" height="438" fill="#fff3e0" stroke="#f57c00" stroke-width="2" rx="10"/>
+  <text x="819" y="84" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">Google Cloud</text>
+
+  <!-- Gemini Live API -->
+  <rect x="670" y="98" width="298" height="196" fill="#fff8e1" stroke="#ffa000" stroke-width="1.5" rx="8"/>
+  <text x="819" y="120" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">Gemini Live API</text>
+  <text x="819" y="160" text-anchor="middle" font-size="30">✨</text>
+  <text x="819" y="190" text-anchor="middle" font-size="10" font-weight="bold" fill="#bf360c">gemini-2.5-flash-native-audio-</text>
+  <text x="819" y="204" text-anchor="middle" font-size="10" font-weight="bold" fill="#bf360c">preview-12-2025</text>
+
+  <rect x="678" y="215" width="130" height="22" fill="white" stroke="#ffa000" stroke-width="1" rx="4"/>
+  <text x="743" y="230" text-anchor="middle" font-size="9" fill="#555">🎧 Native Audio Out</text>
+
+  <rect x="820" y="215" width="140" height="22" fill="white" stroke="#ffa000" stroke-width="1" rx="4"/>
+  <text x="890" y="230" text-anchor="middle" font-size="9" fill="#555">🎥 Vision Understanding</text>
+
+  <rect x="678" y="244" width="130" height="22" fill="white" stroke="#ffa000" stroke-width="1" rx="4"/>
+  <text x="743" y="259" text-anchor="middle" font-size="9" fill="#555">🔧 Tool Call Output</text>
+
+  <rect x="820" y="244" width="140" height="22" fill="white" stroke="#ffa000" stroke-width="1" rx="4"/>
+  <text x="890" y="259" text-anchor="middle" font-size="9" fill="#555">⚡ Sub-second Latency</text>
+
+  <rect x="678" y="272" width="282" height="14" fill="#ffecb3" rx="3"/>
+  <text x="819" y="282" text-anchor="middle" font-size="8" fill="#e65100">WebSocket · bidiGenerateContent endpoint</text>
+
+  <!-- Firestore -->
+  <rect x="670" y="308" width="298" height="108" fill="#fff8e1" stroke="#ffa000" stroke-width="1.5" rx="8"/>
+  <text x="819" y="328" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">Firebase Firestore</text>
+  <text x="819" y="354" text-anchor="middle" font-size="24">🗄️</text>
+  <text x="819" y="378" text-anchor="middle" font-size="10" fill="#555">inspections collection</text>
+  <rect x="678" y="386" width="282" height="22" fill="white" stroke="#ffa000" stroke-width="1" rx="4"/>
+  <text x="819" y="401" text-anchor="middle" font-size="9" fill="#555">carInfo · defects[] · report · createdAt</text>
+
+  <!-- App Engine -->
+  <rect x="670" y="430" width="298" height="52" fill="#fff8e1" stroke="#ffa000" stroke-width="1.5" rx="8"/>
+  <text x="819" y="450" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">App Engine</text>
+  <text x="819" y="466" text-anchor="middle" font-size="10" fill="#555">Static hosting · serves React build</text>
+  <text x="819" y="479" text-anchor="middle" font-size="9" fill="#888">cognisynth-461709.uc.r.appspot.com</text>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- ARROWS                                     -->
+  <!-- ══════════════════════════════════════════ -->
+
+  <!-- User mic → Frontend (audio in) -->
+  <line x1="176" y1="289" x2="212" y2="289" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- User cam → Frontend (video in) -->
+  <line x1="176" y1="326" x2="212" y2="326" stroke="#1976d2" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- Frontend → User speaker (audio out) -->
+  <line x1="212" y1="363" x2="176" y2="363" stroke="#c2185b" stroke-width="2" marker-end="url(#arrowPink)"/>
+
+  <!-- Frontend → User UI -->
+  <line x1="212" y1="400" x2="176" y2="400" stroke="#f57c00" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowDash)"/>
+
+  <!-- Frontend → Gemini (audio + video stream up) -->
+  <path d="M636 145 Q648 145 656 175" fill="none" stroke="#1976d2" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <text x="643" y="140" text-anchor="middle" font-size="9" font-weight="bold" fill="#1565c0">Audio+Video</text>
+
+  <!-- Gemini → Frontend (audio + tool calls down) -->
+  <path d="M656 215 Q648 215 636 195" fill="none" stroke="#388e3c" stroke-width="2.5" marker-end="url(#arrowGreen)"/>
+  <text x="643" y="228" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e7d32">Audio+Tools</text>
+
+  <!-- Frontend → Firestore (save report, dashed) -->
+  <path d="M636 460 Q648 460 670 400" fill="none" stroke="#f57c00" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowDash)"/>
+  <text x="660" y="455" text-anchor="middle" font-size="9" fill="#e65100">Save Report</text>
+
+  <!-- WebSocket label between Frontend and Gemini -->
+  <rect x="622" y="186" width="48" height="16" fill="#e8f5e9" stroke="#66bb6a" stroke-width="1" rx="3"/>
+  <text x="646" y="197" text-anchor="middle" font-size="8" font-weight="bold" fill="#1b5e20">WebSocket</text>
+
+</svg>
